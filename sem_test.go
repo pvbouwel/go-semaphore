@@ -125,6 +125,36 @@ func Test_SemTimedWait_wait(t *testing.T) {
 	}
 }
 
+// When doing a TimedWait any release of the semaphore should allow the
+// waiting process to grab the semaphore.
+func Test_SemTimedWait_wait_with_short_gap(t *testing.T) {
+	var sem Semaphore
+	sem.Open("/testsem_wait2", 0644, 1)
+	sem.Wait()
+	v, _ := sem.GetValue()
+	fmt.Println(v)
+
+	end := make(chan error, 1)
+	go func() {
+		var sem2 Semaphore
+		sem2.Open("/testsem_wait2", 0644, 1)
+		end <- sem2.TimedWait(2 * time.Second)
+		sem2.Close()
+	}()
+
+	time.Sleep(500 * time.Millisecond)
+	sem.Post()
+	sem.Wait()
+	time.Sleep(1600 * time.Millisecond)
+	sem.Post()
+	err := <-end
+	sem.Close()
+	sem.Unlink()
+	if err != nil {
+		t.Fatalf("Should not have timedout: %v", err)
+	}
+}
+
 func Test_SemTimedWait_timeout(t *testing.T) {
 	var sem Semaphore
 	sem.Open("/testsem_wait", 0644, 1)
