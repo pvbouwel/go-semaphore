@@ -1,8 +1,8 @@
 # go-semaphore
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/pvbouwel/go-semaphore/blob/master/COPYING)
-[![Build Status](https://travis-ci.org/pvbouwel/go-semaphore.svg?branch=master)](https://travis-ci.org/dangerousHobo/go-semaphore)
-[![Go Report Card](https://goreportcard.com/badge/github.com/pvbouwel/go-semaphore)](https://goreportcard.com/report/github.com/dangerousHobo/go-semaphore)
+[![Build Status](https://travis-ci.org/pvbouwel/go-semaphore.svg?branch=master)](https://travis-ci.org/pvbouwel/go-semaphore)
+[![Go Report Card](https://goreportcard.com/badge/github.com/pvbouwel/go-semaphore)](https://goreportcard.com/report/github.com/pvbouwel/go-semaphore)
 [![Coverage Status](https://coveralls.io/repos/github/pvbouwel/go-semaphore/badge.svg?branch=master)](https://coveralls.io/github/pvbouwel/go-semaphore?branch=master)
 
 This library provides a wrapper around the C interface for named userspace semaphores on Linux.
