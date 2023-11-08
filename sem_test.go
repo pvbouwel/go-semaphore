@@ -135,10 +135,13 @@ func Test_SemTimedWait_wait_with_short_gap(t *testing.T) {
 	fmt.Println(v)
 
 	end := make(chan error, 1)
+	semWait := make(chan time.Duration, 1)
 	go func() {
+		t1 := time.Now()
 		var sem2 Semaphore
 		sem2.Open("/testsem_wait2", 0644, 1)
 		end <- sem2.TimedWait(2 * time.Second)
+		semWait <- time.Since(t1)
 		sem2.Post()
 	}()
 
@@ -151,6 +154,14 @@ func Test_SemTimedWait_wait_with_short_gap(t *testing.T) {
 	time.Sleep(1600 * time.Millisecond)
 	sem.Post()
 	err := <-end
+	semWaitDuration := <-semWait
+	if semWaitDuration < 500 * time.Millisecond {
+		t.Fatalf("Impossible we still slept for 500 Milliseconds prior to releasing semaphore: sem wait was %s", semWaitDuration.String())
+	}
+	if semWaitDuration > 550 * time.Millisecond {
+		t.Fatalf("It took too long to acquire semaphore. We still slept for 500 Milliseconds prior to releasing semaphore: sem wait was %s", semWaitDuration.String())
+	}
+
 	sem.Close()
 	sem.Unlink()
 	if err != nil {
