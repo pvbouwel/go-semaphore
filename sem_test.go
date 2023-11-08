@@ -139,11 +139,14 @@ func Test_SemTimedWait_wait_with_short_gap(t *testing.T) {
 		var sem2 Semaphore
 		sem2.Open("/testsem_wait2", 0644, 1)
 		end <- sem2.TimedWait(2 * time.Second)
-		sem2.Close()
+		sem2.Post()
 	}()
 
 	time.Sleep(500 * time.Millisecond)
 	sem.Post()
+	// If you do an immediate sem.Wait call you wouldn't allow another process to take the semaphore
+	// by doing a sleep even if it is a short sleep the semaphore can be taken by another process
+	time.Sleep(1 * time.Millisecond)
 	sem.Wait()
 	time.Sleep(1600 * time.Millisecond)
 	sem.Post()
